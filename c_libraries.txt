@@ -1,0 +1,67 @@
+# --------------------------------------------------------
+Static C Libraries -
+
+1. Static Libraries have ".a" extension. (archive)
+2. Created with "ar" program, similar to tar program.
+
+# ----------------------------
+Makefile Rule -
+<archive_file>: <library_files>...
+    ar -rcv $@ $^
+
+$@ -> archive_file
+$^ -> library_files
+# ----------------------------
+
+NOTE: In the main make rule (all in this case), order in which files are provided matters.
+main.c should be before the libraries.
+# ----------------------------
+e.g ->
+libwacky.a: wacky_math.o
+    ar -rcv $@ $^
+
+all: main.c libwacky.a
+    $(CC) $(CFLAGS) $^ -o main
+# ----------------------------
+
+# ----------------------------
+Helpful Commands -
+1. ar -t <archive_name>
+    Lists files in archive
+
+2. nm <archive_name>
+    Lists symbols
+    e.g variables, functions, macros, etc.
+# ----------------------------
+# --------------------------------------------------------
+
+# --------------------------------------------------------
+Dynamic C Libraries -
+
+1. Dynamic Libraries have ".so" or ".dylib" extension
+2. Created with c compiler itself.
+
+# ----------------------------
+Makefile Rule -
+<dynamic_lib>: <source_object_files>...
+    $(CC) -shared -o <dynamic_lib> <source_files>
+
+# NOTE: -fPIC flag is neccessary for files to be reusable.
+<source_object_file>: <c_source_file>
+    $(CC) -c -fPIC <c_source_file>
+
+<dynamic_lib>: Executable name of library
+<source_files>: Object files
+# ----------------------------
+
+# ----------------------------
+e.g ->
+libwacky.so: wacky_math.o
+    clang -shared -o libwacky.so wacky_math.o
+
+wacky_math.o: wacky_math.c wacky_math.h
+    clang -c -fPIC wacky_math.c
+
+Creates libwacky.so executable
+# ----------------------------
+# --------------------------------------------------------
